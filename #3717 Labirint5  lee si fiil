@@ -1,0 +1,87 @@
+#include <bits/stdc++.h>
+int n,m;
+std::ifstream fin("labirint.in");
+std::ofstream fout("labirint.out");
+
+const int di[]={1, -1 , 0, 0 },
+          dj[]={0 ,0 , -1,  1};
+inline bool cond(int i, int j)
+{
+    return i<n&&i>-1&&j>-1&&j<m;
+}
+char mat[1001][1001];
+int drum1[1001][1001];
+int drum2[1001][1001];
+void lee(int x,int y,int drum[1001][1001])
+{
+    std::queue<std::pair<int,int>>q;
+    q.push({x,y});
+    drum[x][y]=1;
+    while(!q.empty())
+    {
+        int i=q.front().first,j=q.front().second;
+        q.pop();
+        for(int k(0);k<4;++k)
+        {
+            int ni = i+ di[k];
+            int nj = j+ dj[k];
+            if(cond(ni,nj)&&drum[ni][nj]==0)
+            {
+                drum[ni][nj]=drum[i][j]+1;
+                if(mat[ni][nj]=='0')
+                q.push({ni,nj});
+            }
+        }
+    }
+}
+
+void reset()
+{
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<m;j++)
+        {
+           // drum[i][j]=0;
+           // viz[i][j]=0;
+        }
+    }
+}
+int main()
+{
+    std::string nimic;
+    fin>>n>>m;
+    getline(fin,nimic);
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<m;j++)
+        {
+            fin>>mat[i][j];
+        }
+    }
+    lee(0,0,drum1);
+    int valmax=drum1[n-1][m-1];
+    lee(n-1,m-1,drum2);
+    for(int i=0;i<n;i++,fout<<'\n')
+        for(int j=0;j<m;j++)
+        {
+            if((drum2[i][j]+drum1[i][j]-1<valmax)&&mat[i][j]=='1'&&(drum2[i][j]&&drum1[i][j]))
+            {
+                fout<<'1';
+                //<<' '<<drum2[i][j]<<' '<<drum1[i][j]<<"  "<<drum2[i][j]+drum1[i][j]-1<<' '<<valmax<<'\n';
+            }
+            else fout<<'0';
+        }
+    /*for(int i=0;i<n;i++,fout<<'\n')
+        for(int j=0;j<m;j++)
+            fout<<mat[i][j]<<' ';
+
+    for(int i=0;i<n;i++,fout<<'\n')
+        for(int j=0;j<m;j++)
+            fout<<drum1[i][j]<<' ';
+
+    for(int i=0;i<n;i++,fout<<'\n')
+        for(int j=0;j<m;j++)
+            fout<<drum2[i][j]<<' ';
+    */
+    return 0;
+}
